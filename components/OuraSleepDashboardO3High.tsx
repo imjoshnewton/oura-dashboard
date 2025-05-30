@@ -29,6 +29,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
+import { sleepData } from "@/data/sleepData"
 
 /* -------------------------------------------------------------------------- */
 /*                                Helper utils                                */
@@ -56,99 +57,25 @@ interface SleepData {
   average_hrv: number;
 }
 
-const rawSleep: SleepData[] = [
-  {
-    day: "2025-05-21",
-    bedtime_start: "01:21 AM",
-    bedtime_end: "06:55 AM",
-    total_sleep_duration: "4 hours, 43 minutes, 30 seconds",
-    efficiency: 85,
-    readiness_score: 63,
-    deep_sleep_duration: "57 minutes",
-    light_sleep_duration: "2 hours, 56 minutes, 30 seconds",
-    rem_sleep_duration: "50 minutes",
-    average_heart_rate: 65.625,
-    average_hrv: 26,
-  },
-  {
-    day: "2025-05-22",
-    bedtime_start: "12:57 AM",
-    bedtime_end: "06:44 AM",
-    total_sleep_duration: "5 hours, 14 minutes, 30 seconds",
-    efficiency: 91,
-    readiness_score: 71,
-    deep_sleep_duration: "24 minutes, 30 seconds",
-    light_sleep_duration: "4 hours, 1 minute",
-    rem_sleep_duration: "49 minutes",
-    average_heart_rate: 64.625,
-    average_hrv: 27,
-  },
-  {
-    day: "2025-05-23",
-    bedtime_start: "09:39 PM",
-    bedtime_end: "06:13 AM",
-    total_sleep_duration: "7 hours, 25 minutes, 30 seconds",
-    efficiency: 87,
-    readiness_score: 77,
-    deep_sleep_duration: "1 hour, 4 minutes",
-    light_sleep_duration: "5 hours, 11 minutes, 30 seconds",
-    rem_sleep_duration: "1 hour, 10 minutes",
-    average_heart_rate: 67.75,
-    average_hrv: 26,
-  },
-  {
-    day: "2025-05-24",
-    bedtime_start: "09:35 PM",
-    bedtime_end: "06:39 AM",
-    total_sleep_duration: "7 hours, 47 minutes",
-    efficiency: 86,
-    readiness_score: 70,
-    deep_sleep_duration: "49 minutes",
-    light_sleep_duration: "5 hours, 27 minutes, 30 seconds",
-    rem_sleep_duration: "1 hour, 30 minutes, 30 seconds",
-    average_heart_rate: 64.75,
-    average_hrv: 30,
-  },
-  {
-    day: "2025-05-25",
-    bedtime_start: "10:47 PM",
-    bedtime_end: "07:00 AM",
-    total_sleep_duration: "5 hours, 50 minutes",
-    efficiency: 71,
-    readiness_score: 70,
-    deep_sleep_duration: "47 minutes",
-    light_sleep_duration: "4 hours, 6 minutes",
-    rem_sleep_duration: "57 minutes",
-    average_heart_rate: 67.375,
-    average_hrv: 29,
-  },
-  {
-    day: "2025-05-26",
-    bedtime_start: "11:57 PM",
-    bedtime_end: "07:34 AM",
-    total_sleep_duration: "6 hours, 41 minutes, 30 seconds",
-    efficiency: 88,
-    readiness_score: 75,
-    deep_sleep_duration: "1 hour, 34 minutes, 30 seconds",
-    light_sleep_duration: "3 hours, 24 minutes",
-    rem_sleep_duration: "1 hour, 43 minutes",
-    average_heart_rate: 62.875,
-    average_hrv: 25,
-  },
-  {
-    day: "2025-05-27",
-    bedtime_start: "01:01 AM",
-    bedtime_end: "06:44 AM",
-    total_sleep_duration: "4 hours, 50 minutes",
-    efficiency: 84,
-    readiness_score: 56,
-    deep_sleep_duration: "49 minutes, 30 seconds",
-    light_sleep_duration: "3 hours, 36 minutes, 30 seconds",
-    rem_sleep_duration: "24 minutes",
-    average_heart_rate: 69.125,
-    average_hrv: 27,
-  },
-]
+const raw = sleepData.slice(-7).map(item => ({
+  day: item.day,
+  bedtime_start: item.bedtime_start,
+  bedtime_end: item.bedtime_end,
+  total_sleep_duration: item.total_sleep_duration,
+  efficiency: item.efficiency,
+  readiness_score: item.readiness_score,
+  deep_sleep_duration: item.deep_sleep_duration,
+  light_sleep_duration: item.light_sleep_duration,
+  rem_sleep_duration: item.rem_sleep_duration,
+  average_heart_rate: item.average_heart_rate,
+  average_hrv: item.average_hrv || 0,
+  awake_time: item.awake_time || "0 minutes",
+  time_in_bed: item.time_in_bed || item.total_sleep_duration,
+  latency: item.latency || 0,
+  restless_periods: item.restless_periods || 0,
+  average_breath: item.average_breath || 12,
+  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate
+}));
 
 const durationToMinutes = (str: string): number => {
   const regex =
@@ -167,7 +94,7 @@ const minutesToHM = (mins: number) => {
 /*                         Data shaping for the dashboard                     */
 /* -------------------------------------------------------------------------- */
 
-const processed = rawSleep.map((d) => {
+const processed = raw.map((d) => {
   const total = durationToMinutes(d.total_sleep_duration)
   const deep = durationToMinutes(d.deep_sleep_duration)
   const light = durationToMinutes(d.light_sleep_duration)

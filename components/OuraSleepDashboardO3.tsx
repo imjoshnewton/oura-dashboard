@@ -23,9 +23,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
   LineChart,
   Line,
   AreaChart,
@@ -37,6 +34,7 @@ import {
   Legend,
 } from "recharts";
 import { format, parseISO } from "date-fns";
+import { sleepData } from "@/data/sleepData";
 
 /* -------------------------------------------------------------------------- */
 /*                                   helpers                                  */
@@ -60,99 +58,25 @@ const parseDurationToHours = (str: string): number => {
 /*                                   dataset                                  */
 /* -------------------------------------------------------------------------- */
 
-const raw = [
-  {
-    day: "2025-05-21",
-    bedtime_start: "01:21 AM",
-    bedtime_end: "06:55 AM",
-    total_sleep_duration: "4 hours, 43 minutes, 30 seconds",
-    efficiency: 85,
-    readiness_score: 63,
-    deep_sleep_duration: "57 minutes",
-    light_sleep_duration: "2 hours, 56 minutes, 30 seconds",
-    rem_sleep_duration: "50 minutes",
-    average_heart_rate: 65.625,
-    average_hrv: 26,
-  },
-  {
-    day: "2025-05-22",
-    bedtime_start: "12:57 AM",
-    bedtime_end: "06:44 AM",
-    total_sleep_duration: "5 hours, 14 minutes, 30 seconds",
-    efficiency: 91,
-    readiness_score: 71,
-    deep_sleep_duration: "24 minutes, 30 seconds",
-    light_sleep_duration: "4 hours, 1 minute",
-    rem_sleep_duration: "49 minutes",
-    average_heart_rate: 64.625,
-    average_hrv: 27,
-  },
-  {
-    day: "2025-05-23",
-    bedtime_start: "09:39 PM",
-    bedtime_end: "06:13 AM",
-    total_sleep_duration: "7 hours, 25 minutes, 30 seconds",
-    efficiency: 87,
-    readiness_score: 77,
-    deep_sleep_duration: "1 hour, 4 minutes",
-    light_sleep_duration: "5 hours, 11 minutes, 30 seconds",
-    rem_sleep_duration: "1 hour, 10 minutes",
-    average_heart_rate: 67.75,
-    average_hrv: 26,
-  },
-  {
-    day: "2025-05-24",
-    bedtime_start: "09:35 PM",
-    bedtime_end: "06:39 AM",
-    total_sleep_duration: "7 hours, 47 minutes",
-    efficiency: 86,
-    readiness_score: 70,
-    deep_sleep_duration: "49 minutes",
-    light_sleep_duration: "5 hours, 27 minutes, 30 seconds",
-    rem_sleep_duration: "1 hour, 30 minutes, 30 seconds",
-    average_heart_rate: 64.75,
-    average_hrv: 30,
-  },
-  {
-    day: "2025-05-25",
-    bedtime_start: "10:47 PM",
-    bedtime_end: "07:00 AM",
-    total_sleep_duration: "5 hours, 50 minutes",
-    efficiency: 71,
-    readiness_score: 70,
-    deep_sleep_duration: "47 minutes",
-    light_sleep_duration: "4 hours, 6 minutes",
-    rem_sleep_duration: "57 minutes",
-    average_heart_rate: 67.375,
-    average_hrv: 29,
-  },
-  {
-    day: "2025-05-26",
-    bedtime_start: "11:57 PM",
-    bedtime_end: "07:34 AM",
-    total_sleep_duration: "6 hours, 41 minutes, 30 seconds",
-    efficiency: 88,
-    readiness_score: 75,
-    deep_sleep_duration: "1 hour, 34 minutes, 30 seconds",
-    light_sleep_duration: "3 hours, 24 minutes",
-    rem_sleep_duration: "1 hour, 43 minutes",
-    average_heart_rate: 62.875,
-    average_hrv: 25,
-  },
-  {
-    day: "2025-05-27",
-    bedtime_start: "01:01 AM",
-    bedtime_end: "06:44 AM",
-    total_sleep_duration: "4 hours, 50 minutes",
-    efficiency: 84,
-    readiness_score: 56,
-    deep_sleep_duration: "49 minutes, 30 seconds",
-    light_sleep_duration: "3 hours, 36 minutes, 30 seconds",
-    rem_sleep_duration: "24 minutes",
-    average_heart_rate: 69.125,
-    average_hrv: 27,
-  },
-];
+const raw = sleepData.slice(-7).map(item => ({
+  day: item.day,
+  bedtime_start: item.bedtime_start,
+  bedtime_end: item.bedtime_end,
+  total_sleep_duration: item.total_sleep_duration,
+  efficiency: item.efficiency,
+  readiness_score: item.readiness_score,
+  deep_sleep_duration: item.deep_sleep_duration,
+  light_sleep_duration: item.light_sleep_duration,
+  rem_sleep_duration: item.rem_sleep_duration,
+  average_heart_rate: item.average_heart_rate,
+  average_hrv: item.average_hrv || 0,
+  awake_time: item.awake_time || "0 minutes",
+  time_in_bed: item.time_in_bed || item.total_sleep_duration,
+  latency: item.latency || 0,
+  restless_periods: item.restless_periods || 0,
+  average_breath: item.average_breath || 12,
+  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate
+}));
 
 /* -------------------------------------------------------------------------- */
 /*                              transformed data                              */
@@ -185,235 +109,186 @@ const stats = {
   avgSleep: avg(data.map((d) => d.totalSleepHours)),
   avgEfficiency: avg(data.map((d) => d.efficiency)),
   avgReadiness: avg(data.map((d) => d.readiness_score)),
-  avgHr: avg(data.map((d) => d.average_heart_rate)),
-  avgHrv: avg(data.map((d) => d.average_hrv)),
+  avgHeartRate: avg(data.map((d) => d.average_heart_rate)),
+  avgHRV: avg(data.map((d) => d.average_hrv)),
+  avgDeep: avg(data.map((d) => d.deepHours)),
+  avgLight: avg(data.map((d) => d.lightHours)),
+  avgREM: avg(data.map((d) => d.remHours)),
 };
-
-/* -------------------------------------------------------------------------- */
-/*                               React component                              */
-/* -------------------------------------------------------------------------- */
 
 const SleepDashboard: React.FC = () => {
   return (
-    <div className="space-y-8">
-      {/* ------------------------------------------------------------------ */}
-      {/*                           stat summary cards                       */}
-      {/* ------------------------------------------------------------------ */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold mb-2">Sleep Dashboard</h1>
+        <p className="text-gray-600">Last 7 nights of sleep data</p>
+      </div>
+
+      {/* ------------------------------ Summary Cards ------------------------------ */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle>Avg Sleep</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Avg Sleep
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {stats.avgSleep.toFixed(1)} h
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.avgSleep.toFixed(1)}h
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Avg Efficiency</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Efficiency
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {stats.avgEfficiency.toFixed(0)}%
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.avgEfficiency.toFixed(0)}%
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Avg Readiness</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Readiness
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {stats.avgReadiness.toFixed(0)}
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.avgReadiness.toFixed(0)}
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Avg HR</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Heart Rate
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {stats.avgHr.toFixed(0)} bpm
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.avgHeartRate.toFixed(0)}
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Avg HRV</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              HRV
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {stats.avgHrv.toFixed(0)} ms
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.avgHRV.toFixed(0)}
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <Separator />
-
-      {/* ------------------------------------------------------------------ */}
-      {/*                                tabs                                */}
-      {/* ------------------------------------------------------------------ */}
-      <Tabs defaultValue="sleep" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="sleep">Sleep vs Readiness</TabsTrigger>
+      {/* ------------------------------ Tabs ------------------------------ */}
+      <Tabs defaultValue="trends" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="trends">Sleep Trends</TabsTrigger>
           <TabsTrigger value="stages">Sleep Stages</TabsTrigger>
-          <TabsTrigger value="vitals">Vitals</TabsTrigger>
-          <TabsTrigger value="table">Table</TabsTrigger>
+          <TabsTrigger value="table">Data Table</TabsTrigger>
         </TabsList>
 
-        {/* ------------------------- Sleep vs Readiness ------------------------ */}
-        <TabsContent value="sleep">
+        {/* ------------------------------ Trends Chart ------------------------------ */}
+        <TabsContent value="trends">
           <Card>
             <CardHeader>
-              <CardTitle>Total Sleep &amp; Readiness</CardTitle>
+              <CardTitle>Sleep Trends Over Time</CardTitle>
             </CardHeader>
-            <CardContent className="h-[350px] p-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="shortDate" />
-                  <YAxis
-                    yAxisId="left"
-                    orientation="left"
-                    domain={[0, (dataMax: number) => dataMax + 1]}
-                    label={{ value: "Hours", position: "insideLeft", angle: -90 }}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    domain={[50, 100]}
-                    label={{ value: "Score", position: "insideRight", angle: 90 }}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    yAxisId="left"
-                    dataKey="totalSleepHours"
-                    name="Sleep (h)"
-                    fill="#6366f1"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="readiness_score"
-                    name="Readiness"
-                    stroke="#22c55e"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="efficiency"
-                    name="Efficiency"
-                    stroke="#f59e0b"
-                    strokeDasharray="3 3"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <LineChart
+                width={800}
+                height={300}
+                data={data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="shortDate" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="totalSleepHours"
+                  stroke="#8884d8"
+                  name="Sleep Hours"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="efficiency"
+                  stroke="#82ca9d"
+                  name="Efficiency %"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="readiness_score"
+                  stroke="#ffc658"
+                  name="Readiness"
+                />
+              </LineChart>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* ----------------------------- Stages ------------------------------- */}
+        {/* ------------------------------ Sleep Stages ------------------------------ */}
         <TabsContent value="stages">
           <Card>
             <CardHeader>
-              <CardTitle>Sleep Stage Distribution</CardTitle>
+              <CardTitle>Sleep Stages Breakdown</CardTitle>
             </CardHeader>
-            <CardContent className="h-[350px] p-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data} stackOffset="expand">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="shortDate" />
-                  <YAxis
-                    tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
-                  />
-                  <Tooltip
-                    formatter={(value: number) =>
-                      `${(value * 100).toFixed(0)}%`
-                    }
-                  />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="deepHours"
-                    name="Deep"
-                    stackId="1"
-                    stroke="#4f46e5"
-                    fill="#818cf8"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="remHours"
-                    name="REM"
-                    stackId="1"
-                    stroke="#be123c"
-                    fill="#f87171"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="lightHours"
-                    name="Light"
-                    stackId="1"
-                    stroke="#0f766e"
-                    fill="#34d399"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <AreaChart
+                width={800}
+                height={300}
+                data={data}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="shortDate" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Area
+                  type="monotone"
+                  dataKey="deepHours"
+                  stackId="1"
+                  stroke="#8884d8"
+                  fill="#8884d8"
+                  name="Deep Sleep"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="lightHours"
+                  stackId="1"
+                  stroke="#82ca9d"
+                  fill="#82ca9d"
+                  name="Light Sleep"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="remHours"
+                  stackId="1"
+                  stroke="#ffc658"
+                  fill="#ffc658"
+                  name="REM Sleep"
+                />
+              </AreaChart>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* ----------------------------- Vitals ------------------------------- */}
-        <TabsContent value="vitals">
-          <Card>
-            <CardHeader>
-              <CardTitle>Average Heart Rate &amp; HRV</CardTitle>
-            </CardHeader>
-            <CardContent className="h-[350px] p-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="shortDate" />
-                  <YAxis
-                    yAxisId="left"
-                    orientation="left"
-                    label={{ value: "HR (bpm)", angle: -90, position: "insideLeft" }}
-                    domain={[50, (dataMax: number) => dataMax + 10]}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    label={{ value: "HRV (ms)", angle: 90, position: "insideRight" }}
-                    domain={[20, (dataMax: number) => dataMax + 10]}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="average_heart_rate"
-                    name="Avg HR"
-                    stroke="#ef4444"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="average_hrv"
-                    name="Avg HRV"
-                    stroke="#06b6d4"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* ------------------------------ Table ------------------------------- */}
+        {/* ------------------------------ Table ------------------------------ */}
         <TabsContent value="table">
           <Card>
             <CardHeader>
@@ -430,22 +305,24 @@ const SleepDashboard: React.FC = () => {
                     <TableHead>Deep (h)</TableHead>
                     <TableHead>Light (h)</TableHead>
                     <TableHead>REM (h)</TableHead>
-                    <TableHead>Avg HR</TableHead>
-                    <TableHead>Avg HRV</TableHead>
+                    <TableHead>HR</TableHead>
+                    <TableHead>HRV</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.map((d) => (
-                    <TableRow key={d.day}>
-                      <TableCell>{d.day}</TableCell>
-                      <TableCell>{d.totalSleepHours.toFixed(2)}</TableCell>
-                      <TableCell>{d.efficiency}</TableCell>
-                      <TableCell>{d.readiness_score}</TableCell>
-                      <TableCell>{d.deepHours.toFixed(2)}</TableCell>
-                      <TableCell>{d.lightHours.toFixed(2)}</TableCell>
-                      <TableCell>{d.remHours.toFixed(2)}</TableCell>
-                      <TableCell>{d.average_heart_rate.toFixed(0)}</TableCell>
-                      <TableCell>{d.average_hrv}</TableCell>
+                  {data.map((row) => (
+                    <TableRow key={row.day}>
+                      <TableCell className="font-medium">
+                        {row.shortDate}
+                      </TableCell>
+                      <TableCell>{row.totalSleepHours.toFixed(1)}</TableCell>
+                      <TableCell>{row.efficiency}%</TableCell>
+                      <TableCell>{row.readiness_score}</TableCell>
+                      <TableCell>{row.deepHours.toFixed(1)}</TableCell>
+                      <TableCell>{row.lightHours.toFixed(1)}</TableCell>
+                      <TableCell>{row.remHours.toFixed(1)}</TableCell>
+                      <TableCell>{row.average_heart_rate}</TableCell>
+                      <TableCell>{row.average_hrv}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

@@ -106,7 +106,7 @@ export default function OuraSleepDashboardClaude() {
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Sleep Analytics Dashboard</h1>
-        <p className="text-gray-600">Your Oura ring data from May 21-27, 2025</p>
+        <p className="text-gray-600">Your Oura ring data from the last 7 days</p>
       </div>
 
       {/* Overview Cards */}
@@ -289,7 +289,7 @@ export default function OuraSleepDashboardClaude() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Best Night</h3>
-              <p className="text-sm text-gray-600">May 24 - {formatDuration(Math.max(...processedData.map(d => d.totalSleepMinutes)))}</p>
+              <p className="text-sm text-gray-600">Best night - {formatDuration(Math.max(...processedData.map(d => d.totalSleepMinutes)))}</p>
               <Badge variant="default" className="mt-1">7h 47m sleep</Badge>
             </div>
             <div className="text-center">
