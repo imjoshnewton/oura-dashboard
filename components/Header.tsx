@@ -3,35 +3,55 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Moon, Activity, Sparkles } from "lucide-react";
 
 export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">Oura Dashboard</span>
+    <header className="sticky top-0 z-50 w-full border-b border-blue-200/20 bg-white/80 backdrop-blur-xl backdrop-saturate-150 shadow-sm">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg blur-lg opacity-75 group-hover:opacity-100 transition-opacity" />
+              <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-2 rounded-lg">
+                <Sparkles className="h-5 w-5" />
+              </div>
+            </div>
+            <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Oura Dashboard
+            </span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="text-sm text-gray-500 mr-4">
+            Track your wellness journey
+          </div>
+          <nav className="flex items-center space-x-1">
             <Link
               href="/"
               className={cn(
-                "transition-colors hover:text-foreground/80",
-                pathname === "/" ? "text-foreground" : "text-foreground/60"
+                "flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200",
+                pathname === "/" 
+                  ? "bg-blue-100 text-blue-700 shadow-sm" 
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}
             >
-              Sleep
+              <Moon className="h-4 w-4" />
+              <span className="font-medium">Sleep</span>
             </Link>
             <Link
               href="/activity"
               className={cn(
-                "transition-colors hover:text-foreground/80",
-                pathname === "/activity" ? "text-foreground" : "text-foreground/60"
+                "flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200",
+                pathname === "/activity" 
+                  ? "bg-blue-100 text-blue-700 shadow-sm" 
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}
             >
-              Activity
+              <Activity className="h-4 w-4" />
+              <span className="font-medium">Activity</span>
             </Link>
           </nav>
         </div>
