@@ -135,25 +135,60 @@ export class OuraClient {
       readinessResponse.data.map(item => [item.day, item.score])
     );
 
-    return sleepResponse.data.map(sleep => ({
-      day: sleep.day,
-      bedtime_start: formatTime(sleep.bedtime_start),
-      bedtime_end: formatTime(sleep.bedtime_end),
-      total_sleep_duration: formatDuration(sleep.total_sleep_duration),
-      efficiency: sleep.efficiency,
-      readiness_score: readinessMap.get(sleep.day) || 0,
-      deep_sleep_duration: formatDuration(sleep.deep_sleep_duration),
-      light_sleep_duration: formatDuration(sleep.light_sleep_duration),
-      rem_sleep_duration: formatDuration(sleep.rem_sleep_duration),
-      average_heart_rate: sleep.average_heart_rate,
-      average_hrv: sleep.average_hrv,
-      awake_time: formatDuration(sleep.awake_time),
-      time_in_bed: formatDuration(sleep.time_in_bed),
-      latency: sleep.latency,
-      restless_periods: sleep.restless_periods,
-      average_breath: sleep.average_breath,
-      lowest_heart_rate: sleep.lowest_heart_rate,
-    }));
+    // Group sleep sessions by date and aggregate
+    const sleepByDate = new Map<string, typeof sleepResponse.data>();
+    
+    sleepResponse.data.forEach(sleep => {
+      const existing = sleepByDate.get(sleep.day) || [];
+      sleepByDate.set(sleep.day, [...existing, sleep]);
+    });
+
+    // Aggregate multiple sleep sessions per day
+    return Array.from(sleepByDate.entries()).map(([day, sessions]) => {
+      // Sort sessions by bedtime to get earliest start and latest end
+      const sortedSessions = sessions.sort((a, b) => 
+        new Date(a.bedtime_start).getTime() - new Date(b.bedtime_start).getTime()
+      );
+
+      // Sum durations
+      const totalSleepDuration = sessions.reduce((sum, s) => sum + s.total_sleep_duration, 0);
+      const deepSleepDuration = sessions.reduce((sum, s) => sum + s.deep_sleep_duration, 0);
+      const lightSleepDuration = sessions.reduce((sum, s) => sum + s.light_sleep_duration, 0);
+      const remSleepDuration = sessions.reduce((sum, s) => sum + s.rem_sleep_duration, 0);
+      const awakeTime = sessions.reduce((sum, s) => sum + s.awake_time, 0);
+      const timeInBed = sessions.reduce((sum, s) => sum + s.time_in_bed, 0);
+
+      // Calculate weighted averages for rates/metrics
+      const avgEfficiency = sessions.reduce((sum, s) => sum + (s.efficiency * s.total_sleep_duration), 0) / totalSleepDuration;
+      const avgHeartRate = sessions.reduce((sum, s) => sum + (s.average_heart_rate * s.total_sleep_duration), 0) / totalSleepDuration;
+      const avgHrv = sessions.reduce((sum, s) => sum + (s.average_hrv * s.total_sleep_duration), 0) / totalSleepDuration;
+      const avgBreath = sessions.reduce((sum, s) => sum + (s.average_breath * s.total_sleep_duration), 0) / totalSleepDuration;
+
+      // Sum other metrics
+      const totalLatency = sessions.reduce((sum, s) => sum + s.latency, 0);
+      const totalRestlessPeriods = sessions.reduce((sum, s) => sum + s.restless_periods, 0);
+      const lowestHeartRate = Math.min(...sessions.map(s => s.lowest_heart_rate));
+
+      return {
+        day,
+        bedtime_start: formatTime(sortedSessions[0].bedtime_start),
+        bedtime_end: formatTime(sortedSessions[sortedSessions.length - 1].bedtime_end),
+        total_sleep_duration: formatDuration(totalSleepDuration),
+        efficiency: Math.round(avgEfficiency),
+        readiness_score: readinessMap.get(day) || 0,
+        deep_sleep_duration: formatDuration(deepSleepDuration),
+        light_sleep_duration: formatDuration(lightSleepDuration),
+        rem_sleep_duration: formatDuration(remSleepDuration),
+        average_heart_rate: Math.round(avgHeartRate * 10) / 10,
+        average_hrv: Math.round(avgHrv),
+        awake_time: formatDuration(awakeTime),
+        time_in_bed: formatDuration(timeInBed),
+        latency: totalLatency,
+        restless_periods: totalRestlessPeriods,
+        average_breath: Math.round(avgBreath * 100) / 100,
+        lowest_heart_rate: lowestHeartRate,
+      };
+    }).sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime());
   }
 
   async getActivityData(startDate: string, endDate: string) {
