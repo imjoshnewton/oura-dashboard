@@ -25,12 +25,6 @@ import { getLastNDaysData } from "@/data/sleepData";
 // Get the last 7 days of sleep data
 const rawSleepData = getLastNDaysData(7);
 
-// Debug: Log the latest entries to verify we have 5-29 data
-console.log(
-  "Claude Dashboard - Last 7 entries:",
-  rawSleepData.map((d) => d.day),
-);
-
 // Helper function to parse duration strings to minutes
 function parseDuration(durationStr: string): number {
   if (!durationStr) return 0;
@@ -414,4 +408,3 @@ export default function OuraSleepDashboardClaude() {
     </div>
   );
 }
-
