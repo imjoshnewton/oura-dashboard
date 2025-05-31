@@ -1,3 +1,5 @@
+"use client";
+
 /* ==========================================================================
    SleepDashboard.tsx
    A modern Oura-sleep dashboard built with shadcn/ui + Recharts
