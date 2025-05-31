@@ -1,19 +1,9 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { Switch } from "@/components/ui/switch"
+import { useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -27,13 +17,13 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from "recharts"
-import { sleepData } from "@/data/sleepData"
+} from "recharts";
+import { sleepData } from "@/data/sleepData";
 
 /**
  * 7-day Oura sleep data ---------------------------------------------
  */
-const raw = sleepData.slice(-7).map(item => ({
+const raw = sleepData.slice(-7).map((item) => ({
   day: item.day,
   bedtime_start: item.bedtime_start,
   bedtime_end: item.bedtime_end,
@@ -50,7 +40,7 @@ const raw = sleepData.slice(-7).map(item => ({
   latency: item.latency || 0,
   restless_periods: item.restless_periods || 0,
   average_breath: item.average_breath || 12,
-  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate
+  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate,
 }));
 
 /**
@@ -59,20 +49,20 @@ const raw = sleepData.slice(-7).map(item => ({
 // Convert any duration string to minutes
 const parseDurationToMinutes = (str: string): number => {
   const regex =
-    /(?:(\d+)\s*hours?)?\s*,?\s*(?:(\d+)\s*minutes?)?\s*,?\s*(?:(\d+)\s*seconds?)?/i
-  const [, h = "0", m = "0", s = "0"] = regex.exec(str) || []
-  const minutes = parseInt(h) * 60 + parseInt(m) + parseInt(s) / 60
-  return Number.isFinite(minutes) ? +minutes.toFixed(2) : 0
-}
+    /(?:(\d+)\s*hours?)?\s*,?\s*(?:(\d+)\s*minutes?)?\s*,?\s*(?:(\d+)\s*seconds?)?/i;
+  const [, h = "0", m = "0", s = "0"] = regex.exec(str) || [];
+  const minutes = parseInt(h) * 60 + parseInt(m) + parseInt(s) / 60;
+  return Number.isFinite(minutes) ? +minutes.toFixed(2) : 0;
+};
 
 const shortDate = (iso: string) =>
-  new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(new Date(iso))
+  new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(new Date(iso));
 
 /**
  * Dashboard Component -------------------------------------------------
  */
 export default function SleepDashboard() {
-  const [showAvgHr, setShowAvgHr] = useState(false)
+  const [showAvgHr, setShowAvgHr] = useState(false);
 
   // transform data for charts + cards only once ----------------------
   const { chartData, lastNight } = useMemo(() => {
@@ -86,9 +76,9 @@ export default function SleepDashboard() {
       readiness: d.readiness_score,
       avgHr: +d.average_heart_rate.toFixed(1),
       hrv: d.average_hrv,
-    }))
-    return { chartData: processed, lastNight: processed.at(-1)! }
-  }, [])
+    }));
+    return { chartData: processed, lastNight: processed.at(-1)! };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -138,7 +128,11 @@ export default function SleepDashboard() {
             </CardHeader>
             <CardContent className="h-[350px] px-0">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} stackOffset="expand">
+                <AreaChart
+                  data={chartData}
+                  stackOffset="expand"
+                  margin={{ top: 15, right: 25, left: 10, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis
@@ -189,7 +183,10 @@ export default function SleepDashboard() {
             </CardHeader>
             <CardContent className="h-[350px] px-0">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 15, right: 25, left: 5, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
@@ -222,7 +219,10 @@ export default function SleepDashboard() {
             </CardHeader>
             <CardContent className="h-[350px] px-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 15, right: 25, left: 0, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
@@ -239,7 +239,7 @@ export default function SleepDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 /**
@@ -251,23 +251,21 @@ function StatCard({
   intent = "default",
   hide = false,
 }: {
-  title: string
-  value: string
-  intent?: "good" | "bad" | "default"
-  hide?: boolean
+  title: string;
+  value: string;
+  intent?: "good" | "bad" | "default";
+  hide?: boolean;
 }) {
   const colorMap = {
     good: "text-emerald-500",
     bad: "text-rose-500",
     default: "text-foreground",
-  }
-  if (hide) return null
+  };
+  if (hide) return null;
   return (
     <Card className="flex flex-col justify-between">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm text-muted-foreground">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-sm text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <span className={`text-2xl font-semibold ${colorMap[intent]}`}>
@@ -275,14 +273,15 @@ function StatCard({
         </span>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 /**
  * Simple readiness coloring logic ------------------------------------
  */
 function scoreIntent(score: number): "good" | "bad" | "default" {
-  if (score >= 75) return "good"
-  if (score < 65) return "bad"
-  return "default"
+  if (score >= 75) return "good";
+  if (score < 65) return "bad";
+  return "default";
 }
+

@@ -1,16 +1,6 @@
 import React, { useState, useMemo } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   AreaChart,
@@ -40,12 +30,8 @@ function durationToMinutes(str: string): number {
   if (!str) return 0;
   const regex =
     /(?:(\d+)\s*hours?)?\s*,?\s*(?:(\d+)\s*minutes?)?\s*,?\s*(?:(\d+)\s*seconds?)?/;
-  const [, h, m, s] = (str.match(regex) || []);
-  return (
-    (parseInt(h || "0") * 60) +
-    (parseInt(m || "0")) +
-    (parseInt(s || "0") / 60)
-  );
+  const [, h, m, s] = str.match(regex) || [];
+  return parseInt(h || "0") * 60 + parseInt(m || "0") + parseInt(s || "0") / 60;
 }
 
 // Format minutes to "Hh Mm"
@@ -57,8 +43,9 @@ function minutesToHM(mins: number): string {
 
 // Converts "2025-05-21" to "May 21"
 function formatDay(day: string): string {
-  const date = new Date(day);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  // Add 'T00:00:00' to ensure the date is parsed in local time, not UTC
+  const date = new Date(day + "T00:00:00");
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 // --- Custom tooltip for charts ---
@@ -159,32 +146,35 @@ const OuraSleepDashboardGPT = () => {
   const last = <T,>(arr: T[]) => arr[arr.length - 1];
 
   // --- Cards config ---
-  const summaryCards = useMemo(() => [
-    {
-      label: "Avg Sleep",
-      value: minutesToHM(avg(chartData.map((d) => d.totalSleepMins))),
-      icon: <Moon className="w-5 h-5 text-indigo-500" />,
-      desc: `per night (last ${timeFrame} days)`,
-    },
-    {
-      label: "Efficiency",
-      value: `${Math.round(avg(chartData.map((d) => d.efficiency)))}%`,
-      icon: <Activity className="w-5 h-5 text-green-500" />,
-      desc: "Avg sleep efficiency",
-    },
-    {
-      label: "Readiness",
-      value: `${Math.round(avg(chartData.map((d) => d.readiness)))} / 100`,
-      icon: <Heart className="w-5 h-5 text-orange-500" />,
-      desc: "Avg readiness score",
-    },
-    {
-      label: "Avg HRV",
-      value: `${Math.round(avg(chartData.map((d) => d.avgHRV)))} ms`,
-      icon: <Calendar className="w-5 h-5 text-cyan-500" />,
-      desc: "Avg nightly HRV",
-    },
-  ], [chartData, timeFrame]);
+  const summaryCards = useMemo(
+    () => [
+      {
+        label: "Avg Sleep",
+        value: minutesToHM(avg(chartData.map((d) => d.totalSleepMins))),
+        icon: <Moon className="w-5 h-5 text-indigo-500" />,
+        desc: `per night (last ${timeFrame} days)`,
+      },
+      {
+        label: "Efficiency",
+        value: `${Math.round(avg(chartData.map((d) => d.efficiency)))}%`,
+        icon: <Activity className="w-5 h-5 text-green-500" />,
+        desc: "Avg sleep efficiency",
+      },
+      {
+        label: "Readiness",
+        value: `${Math.round(avg(chartData.map((d) => d.readiness)))} / 100`,
+        icon: <Heart className="w-5 h-5 text-orange-500" />,
+        desc: "Avg readiness score",
+      },
+      {
+        label: "Avg HRV",
+        value: `${Math.round(avg(chartData.map((d) => d.avgHRV)))} ms`,
+        icon: <Calendar className="w-5 h-5 text-cyan-500" />,
+        desc: "Avg nightly HRV",
+      },
+    ],
+    [chartData, timeFrame],
+  );
 
   // For sleep stages chart: stacked bar data
   const stagesData = useMemo(() => {
@@ -213,7 +203,10 @@ const OuraSleepDashboardGPT = () => {
             Oura Sleep Dashboard
           </h1>
           <span className="text-gray-600 text-sm">
-            Your sleep, readiness, and recovery insights
+            Data range:{" "}
+            {filteredData.length > 0
+              ? `${formatDay(filteredData[0].day)} - ${formatDay(filteredData[filteredData.length - 1].day)}`
+              : "No data"}
           </span>
         </div>
         <div className="flex gap-2 mt-2 md:mt-0">
@@ -234,7 +227,10 @@ const OuraSleepDashboardGPT = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {summaryCards.map((card) => (
-          <Card key={card.label} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card
+            key={card.label}
+            className="shadow-sm hover:shadow-md transition-shadow"
+          >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">
                 {card.label}
@@ -262,7 +258,9 @@ const OuraSleepDashboardGPT = () => {
           <Card className="p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className="font-semibold text-lg">Sleep Duration & Efficiency</h2>
+                <h2 className="font-semibold text-lg">
+                  Sleep Duration & Efficiency
+                </h2>
                 <p className="text-gray-600 text-xs">
                   Track your nightly sleep and efficiency
                 </p>
@@ -270,11 +268,18 @@ const OuraSleepDashboardGPT = () => {
             </div>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 16, right: 40, left: 0, bottom: 0 }}>
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 16, right: 0, left: 0, bottom: 0 }}
+                >
                   <defs>
                     <linearGradient id="sleep" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#6366F1" stopOpacity={0.6} />
-                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0.05} />
+                      <stop
+                        offset="95%"
+                        stopColor="#6366F1"
+                        stopOpacity={0.05}
+                      />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="day" tick={{ fontSize: 12 }} />
@@ -283,7 +288,10 @@ const OuraSleepDashboardGPT = () => {
                     tickFormatter={minutesToHM}
                     tick={{ fontSize: 12 }}
                     width={40}
-                    domain={[0, (dataMax: number) => Math.max(500, dataMax + 20)]}
+                    domain={[
+                      0,
+                      (dataMax: number) => Math.max(500, dataMax + 20),
+                    ]}
                   />
                   <YAxis
                     yAxisId="right"
@@ -325,7 +333,9 @@ const OuraSleepDashboardGPT = () => {
           <Card className="p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className="font-semibold text-lg">Sleep Stages Breakdown</h2>
+                <h2 className="font-semibold text-lg">
+                  Sleep Stages Breakdown
+                </h2>
                 <p className="text-gray-600 text-xs">
                   See how your sleep is distributed between stages
                 </p>
@@ -333,7 +343,11 @@ const OuraSleepDashboardGPT = () => {
             </div>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stagesData} stackOffset="expand" margin={{ top: 16, right: 40, left: 0, bottom: 0 }}>
+                <BarChart
+                  data={stagesData}
+                  stackOffset="expand"
+                  margin={{ top: 16, right: 0, left: 0, bottom: 0 }}
+                >
                   <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                   <YAxis
                     tickFormatter={(v) => `${Math.round(v * 100)}%`}
@@ -344,7 +358,12 @@ const OuraSleepDashboardGPT = () => {
                   <Legend />
                   <Bar dataKey="Deep" stackId="a" fill="#6366F1" name="Deep" />
                   <Bar dataKey="REM" stackId="a" fill="#60A5FA" name="REM" />
-                  <Bar dataKey="Light" stackId="a" fill="#FBBF24" name="Light" />
+                  <Bar
+                    dataKey="Light"
+                    stackId="a"
+                    fill="#FBBF24"
+                    name="Light"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -364,7 +383,10 @@ const OuraSleepDashboardGPT = () => {
             </div>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 16, right: 40, left: 0, bottom: 0 }}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 16, right: 15, left: 0, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                   <YAxis
@@ -383,7 +405,12 @@ const OuraSleepDashboardGPT = () => {
                     dot={{ r: 5, fill: "#FB923C" }}
                     activeDot={{ r: 8 }}
                   />
-                  <ReferenceLine y={70} label="70" stroke="#D1D5DB" strokeDasharray="4 4" />
+                  <ReferenceLine
+                    y={70}
+                    label="70"
+                    stroke="#D1D5DB"
+                    strokeDasharray="4 4"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -404,7 +431,8 @@ const OuraSleepDashboardGPT = () => {
             <div>
               <div className="text-xs text-gray-600 mb-1">Bedtime</div>
               <div className="font-semibold">
-                {filteredData[filteredData.length - 1].bedtime_start} - {filteredData[filteredData.length - 1].bedtime_end}
+                {filteredData[filteredData.length - 1].bedtime_start} -{" "}
+                {filteredData[filteredData.length - 1].bedtime_end}
               </div>
             </div>
             <div>
@@ -415,9 +443,7 @@ const OuraSleepDashboardGPT = () => {
             </div>
             <div>
               <div className="text-xs text-gray-600 mb-1">Efficiency</div>
-              <div className="font-semibold">
-                {last(chartData).efficiency}%
-              </div>
+              <div className="font-semibold">{last(chartData).efficiency}%</div>
             </div>
             <div>
               <div className="text-xs text-gray-600 mb-1">Readiness</div>
@@ -453,9 +479,7 @@ const OuraSleepDashboardGPT = () => {
             </div>
             <div>
               <div className="text-xs text-gray-600">Avg HRV</div>
-              <div className="font-semibold">
-                {last(chartData).avgHRV} ms
-              </div>
+              <div className="font-semibold">{last(chartData).avgHRV} ms</div>
             </div>
           </div>
         </CardContent>
@@ -465,3 +489,4 @@ const OuraSleepDashboardGPT = () => {
 };
 
 export default OuraSleepDashboardGPT;
+

@@ -1,19 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -22,19 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { sleepData } from "@/data/sleepData";
+import { format, parseISO } from "date-fns";
+import React from "react";
 import {
-  LineChart,
-  Line,
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
 } from "recharts";
-import { format, parseISO } from "date-fns";
-import { sleepData } from "@/data/sleepData";
 
 /* -------------------------------------------------------------------------- */
 /*                                   helpers                                  */
@@ -58,7 +48,7 @@ const parseDurationToHours = (str: string): number => {
 /*                                   dataset                                  */
 /* -------------------------------------------------------------------------- */
 
-const raw = sleepData.slice(-7).map(item => ({
+const raw = sleepData.slice(-7).map((item) => ({
   day: item.day,
   bedtime_start: item.bedtime_start,
   bedtime_end: item.bedtime_end,
@@ -75,7 +65,7 @@ const raw = sleepData.slice(-7).map(item => ({
   latency: item.latency || 0,
   restless_periods: item.restless_periods || 0,
   average_breath: item.average_breath || 12,
-  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate
+  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate,
 }));
 
 /* -------------------------------------------------------------------------- */
@@ -185,9 +175,7 @@ const SleepDashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.avgHRV.toFixed(0)}
-            </div>
+            <div className="text-2xl font-bold">{stats.avgHRV.toFixed(0)}</div>
           </CardContent>
         </Card>
       </div>
@@ -207,36 +195,36 @@ const SleepDashboard: React.FC = () => {
               <CardTitle>Sleep Trends Over Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <LineChart
-                width={800}
-                height={300}
-                data={data}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="shortDate" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="totalSleepHours"
-                  stroke="#8884d8"
-                  name="Sleep Hours"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="efficiency"
-                  stroke="#82ca9d"
-                  name="Efficiency %"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="readiness_score"
-                  stroke="#ffc658"
-                  name="Readiness"
-                />
-              </LineChart>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart
+                  data={data}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="shortDate" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="totalSleepHours"
+                    stroke="#8884d8"
+                    name="Sleep Hours"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="efficiency"
+                    stroke="#82ca9d"
+                    name="Efficiency %"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="readiness_score"
+                    stroke="#ffc658"
+                    name="Readiness"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -248,42 +236,42 @@ const SleepDashboard: React.FC = () => {
               <CardTitle>Sleep Stages Breakdown</CardTitle>
             </CardHeader>
             <CardContent>
-              <AreaChart
-                width={800}
-                height={300}
-                data={data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="shortDate" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="deepHours"
-                  stackId="1"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                  name="Deep Sleep"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="lightHours"
-                  stackId="1"
-                  stroke="#82ca9d"
-                  fill="#82ca9d"
-                  name="Light Sleep"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="remHours"
-                  stackId="1"
-                  stroke="#ffc658"
-                  fill="#ffc658"
-                  name="REM Sleep"
-                />
-              </AreaChart>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart
+                  data={data}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="shortDate" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="deepHours"
+                    stackId="1"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    name="Deep Sleep"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="lightHours"
+                    stackId="1"
+                    stroke="#82ca9d"
+                    fill="#82ca9d"
+                    name="Light Sleep"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="remHours"
+                    stackId="1"
+                    stroke="#ffc658"
+                    fill="#ffc658"
+                    name="REM Sleep"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -294,39 +282,45 @@ const SleepDashboard: React.FC = () => {
             <CardHeader>
               <CardTitle>Raw Sleep Records</CardTitle>
             </CardHeader>
-            <CardContent className="overflow-auto p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Sleep (h)</TableHead>
-                    <TableHead>Efficiency</TableHead>
-                    <TableHead>Readiness</TableHead>
-                    <TableHead>Deep (h)</TableHead>
-                    <TableHead>Light (h)</TableHead>
-                    <TableHead>REM (h)</TableHead>
-                    <TableHead>HR</TableHead>
-                    <TableHead>HRV</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.map((row) => (
-                    <TableRow key={row.day}>
-                      <TableCell className="font-medium">
-                        {row.shortDate}
-                      </TableCell>
-                      <TableCell>{row.totalSleepHours.toFixed(1)}</TableCell>
-                      <TableCell>{row.efficiency}%</TableCell>
-                      <TableCell>{row.readiness_score}</TableCell>
-                      <TableCell>{row.deepHours.toFixed(1)}</TableCell>
-                      <TableCell>{row.lightHours.toFixed(1)}</TableCell>
-                      <TableCell>{row.remHours.toFixed(1)}</TableCell>
-                      <TableCell>{row.average_heart_rate}</TableCell>
-                      <TableCell>{row.average_hrv}</TableCell>
+            <CardContent className="overflow-auto p-0 pb-4">
+              <ResponsiveContainer
+                width="100%"
+                height={300}
+                className="p-4 pt-0"
+              >
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Sleep (h)</TableHead>
+                      <TableHead>Efficiency</TableHead>
+                      <TableHead>Readiness</TableHead>
+                      <TableHead>Deep (h)</TableHead>
+                      <TableHead>Light (h)</TableHead>
+                      <TableHead>REM (h)</TableHead>
+                      <TableHead>HR</TableHead>
+                      <TableHead>HRV</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.map((row) => (
+                      <TableRow key={row.day}>
+                        <TableCell className="font-medium">
+                          {row.shortDate}
+                        </TableCell>
+                        <TableCell>{row.totalSleepHours.toFixed(1)}</TableCell>
+                        <TableCell>{row.efficiency}%</TableCell>
+                        <TableCell>{row.readiness_score}</TableCell>
+                        <TableCell>{row.deepHours.toFixed(1)}</TableCell>
+                        <TableCell>{row.lightHours.toFixed(1)}</TableCell>
+                        <TableCell>{row.remHours.toFixed(1)}</TableCell>
+                        <TableCell>{row.average_heart_rate}</TableCell>
+                        <TableCell>{row.average_hrv}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -336,3 +330,4 @@ const SleepDashboard: React.FC = () => {
 };
 
 export default SleepDashboard;
+

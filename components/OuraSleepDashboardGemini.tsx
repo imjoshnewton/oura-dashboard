@@ -347,7 +347,10 @@ const OuraSleepDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent className="h-[400px] pr-0">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={processedData}>
+                    <LineChart
+                      data={processedData}
+                      margin={{ top: 5, right: 25, left: 5, bottom: 0 }}
+                    >
                       <CartesianGrid
                         strokeDasharray="3 3"
                         strokeOpacity={0.2}
@@ -480,7 +483,11 @@ const OuraSleepDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent className="h-[350px] pr-0">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={processedData} barCategoryGap="20%">
+                    <BarChart
+                      data={processedData}
+                      barCategoryGap="20%"
+                      margin={{ top: 5, right: 25, left: 5, bottom: 0 }}
+                    >
                       <CartesianGrid
                         strokeDasharray="3 3"
                         strokeOpacity={0.2}
@@ -541,7 +548,10 @@ const OuraSleepDashboard: React.FC = () => {
               </CardHeader>
               <CardContent className="h-[400px] pr-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={processedData}>
+                  <LineChart
+                    data={processedData}
+                    margin={{ top: 5, right: 25, left: 5, bottom: 0 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                     <XAxis dataKey="shortDate" tick={{ fontSize: 12 }} />
                     <YAxis
