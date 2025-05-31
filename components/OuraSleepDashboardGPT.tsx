@@ -5,6 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   AreaChart,
   Area,
   BarChart,
@@ -212,18 +219,37 @@ const OuraSleepDashboardGPT = ({ sleepData }: OuraSleepDashboardGPTProps) => {
               : "No data"}
           </span>
         </div>
-        <div className="flex gap-2 mt-2 md:mt-0">
-          {timeFrameOptions.map((option) => (
-            <Button
-              key={option.value}
-              variant={timeFrame === option.value ? "default" : "outline"}
-              onClick={() => setTimeFrame(option.value)}
-              size="sm"
-              className="text-xs"
-            >
-              {option.label}
-            </Button>
-          ))}
+        <div className="mt-2 md:mt-0">
+          {/* Mobile Select */}
+          <div className="md:hidden">
+            <Select value={timeFrame.toString()} onValueChange={(value) => setTimeFrame(parseInt(value))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select time range" />
+              </SelectTrigger>
+              <SelectContent>
+                {timeFrameOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value.toString()}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Desktop Buttons */}
+          <div className="hidden md:flex gap-2">
+            {timeFrameOptions.map((option) => (
+              <Button
+                key={option.value}
+                variant={timeFrame === option.value ? "default" : "outline"}
+                onClick={() => setTimeFrame(option.value)}
+                size="sm"
+                className="text-xs"
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
