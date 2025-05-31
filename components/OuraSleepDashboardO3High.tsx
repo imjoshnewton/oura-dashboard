@@ -2,35 +2,33 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useMemo, useState } from "react"
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card"
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs";
+import { SleepData } from "@/data/sleepData";
+import React, { useMemo, useState } from "react";
 import {
-  ResponsiveContainer,
-  LineChart,
-  BarChart,
-  PieChart,
-  Pie,
-  Line,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-} from "recharts"
-import { SleepData } from "@/data/sleepData"
+    Bar,
+    BarChart,
+    Cell,
+    Legend,
+    Line,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
+} from "recharts";
 
 interface OuraSleepDashboardO3HighProps {
   sleepData: SleepData[];

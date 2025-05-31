@@ -52,7 +52,7 @@ const parseDurationToHours = (str: string): number => {
 /*                                   component                                */
 /* -------------------------------------------------------------------------- */
 
-const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardO3Props) => {
+const OuraSleepDashboardO3 = ({ sleepData }: OuraSleepDashboardO3Props) => {
 /* -------------------------------------------------------------------------- */
 /*                                   dataset                                  */
 /* -------------------------------------------------------------------------- */
@@ -337,5 +337,5 @@ const stats = {
   );
 };
 
-export default OuraSleepDashboard;
+export default OuraSleepDashboardO3;
 
