@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -44,8 +39,12 @@ const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardProps) => {
 
   return (
     <div className="w-full">
-      <Tabs value={selectedModel} onValueChange={setSelectedModel} className="w-full">
-        <div className="max-w-5xl mx-auto px-4 md:px-8 pt-4">
+      <Tabs
+        value={selectedModel}
+        onValueChange={setSelectedModel}
+        className="w-full"
+      >
+        <div className="max-w-7xl mx-auto px-4 md:px-8 pt-4">
           {/* Mobile dropdown */}
           <div className="md:hidden mb-4">
             <Select value={selectedModel} onValueChange={setSelectedModel}>
@@ -61,7 +60,7 @@ const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardProps) => {
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Desktop tabs */}
           <TabsList className="hidden md:grid w-full max-w-6xl mx-auto grid-cols-8">
             <TabsTrigger value="gemini" className="text-sm">
@@ -90,49 +89,49 @@ const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardProps) => {
             </TabsTrigger>
           </TabsList>
         </div>
-        
+
         <TabsContent value="gemini" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardGemini sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="gpt" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardGPT sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="claude" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardClaude sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="o3mini" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardO3Mini sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="o3" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardO3 sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="o3low" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardO3Low sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="o3medium" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardO3Medium sleepData={sleepData} />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="o3high" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <OuraSleepDashboardO3High sleepData={sleepData} />
@@ -144,3 +143,4 @@ const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardProps) => {
 };
 
 export default OuraSleepDashboard;
+

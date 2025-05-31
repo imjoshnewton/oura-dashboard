@@ -198,7 +198,7 @@ const OuraSleepDashboardGPT = ({ sleepData }: OuraSleepDashboardGPTProps) => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-6 font-sans">
+    <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
         <div>
@@ -492,4 +492,3 @@ const OuraSleepDashboardGPT = ({ sleepData }: OuraSleepDashboardGPTProps) => {
 };
 
 export default OuraSleepDashboardGPT;
-

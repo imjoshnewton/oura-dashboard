@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -17,43 +16,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip as ShadTooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import React, { useMemo } from "react";
 
+import { SleepData } from "@/data/sleepData";
 import {
-  LineChart,
+  Activity,
+  BarChartHorizontalBig,
+  BedDouble,
+  CalendarDays,
+  Gauge,
+  HeartPulse,
+  Moon,
+  Percent,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
   Line,
+  LineChart,
+  Pie,
+  PieChart,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
 } from "recharts";
-import {
-  BedDouble,
-  Zap,
-  Percent,
-  HeartPulse,
-  Activity,
-  TrendingUp,
-  Moon,
-  Sun,
-  Gauge,
-  CalendarDays,
-  BarChartHorizontalBig,
-  Info,
-} from "lucide-react";
-import { SleepData } from "@/data/sleepData";
 
 // Use the SleepData type from the common data file
 type SleepDataEntry = SleepData;
@@ -107,7 +100,9 @@ interface OuraSleepDashboardProps {
 }
 
 // Main Dashboard Component
-const OuraSleepDashboard: React.FC<OuraSleepDashboardProps> = ({ sleepData }) => {
+const OuraSleepDashboard: React.FC<OuraSleepDashboardProps> = ({
+  sleepData,
+}) => {
   const processedData = useMemo(() => {
     return sleepData
       .map((entry) => {
