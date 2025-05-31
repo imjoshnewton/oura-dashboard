@@ -18,8 +18,13 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { sleepData } from "@/data/sleepData";
+import { SleepData } from "@/data/sleepData";
 
+interface OuraSleepDashboardO3LowProps {
+  sleepData: SleepData[];
+}
+
+const OuraSleepDashboardO3Low = ({ sleepData }: OuraSleepDashboardO3LowProps) => {
 /**
  * 7-day Oura sleep data ---------------------------------------------
  */
@@ -61,7 +66,6 @@ const shortDate = (iso: string) =>
 /**
  * Dashboard Component -------------------------------------------------
  */
-export default function SleepDashboard() {
   const [showAvgHr, setShowAvgHr] = useState(false);
 
   // transform data for charts + cards only once ----------------------
@@ -240,7 +244,7 @@ export default function SleepDashboard() {
       </Tabs>
     </div>
   );
-}
+};
 
 /**
  * Small helper card component ----------------------------------------
@@ -284,4 +288,6 @@ function scoreIntent(score: number): "good" | "bad" | "default" {
   if (score < 65) return "bad";
   return "default";
 }
+
+export default OuraSleepDashboardO3Low;
 

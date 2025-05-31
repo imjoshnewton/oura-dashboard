@@ -20,10 +20,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import { Calendar, Heart, Moon, Activity } from "lucide-react";
-import { sleepData } from "@/data/sleepData";
-
-// Use all sleep data from the common data file
-const allSleepData = sleepData;
+import { SleepData } from "@/data/sleepData";
 
 // --- Utility functions ---
 
@@ -116,15 +113,19 @@ function CustomTooltip({ active, payload, label, type }: CustomTooltipProps) {
   );
 }
 
+interface OuraSleepDashboardGPTProps {
+  sleepData: SleepData[];
+}
+
 // --- The Dashboard Component ---
-const OuraSleepDashboardGPT = () => {
+const OuraSleepDashboardGPT = ({ sleepData }: OuraSleepDashboardGPTProps) => {
   const [tab, setTab] = useState("sleep");
   const [timeFrame, setTimeFrame] = useState(7);
 
   // Filter data based on selected time frame
   const filteredData = useMemo(() => {
-    return allSleepData.slice(-timeFrame);
-  }, [timeFrame]);
+    return sleepData.slice(-timeFrame);
+  }, [sleepData, timeFrame]);
 
   // --- Preprocessing for charts ---
   const chartData = useMemo(() => {

@@ -53,7 +53,7 @@ import {
   BarChartHorizontalBig,
   Info,
 } from "lucide-react";
-import { SleepData, getLastNDaysData } from "@/data/sleepData";
+import { SleepData } from "@/data/sleepData";
 
 // Use the SleepData type from the common data file
 type SleepDataEntry = SleepData;
@@ -102,13 +102,14 @@ const formatMinutesToHoursMinutes = (totalMinutes: number): string => {
   return result.trim();
 };
 
-// Get the last 7 days of sleep data
-const sampleSleepData = getLastNDaysData(7) as SleepDataEntry[];
+interface OuraSleepDashboardProps {
+  sleepData: SleepData[];
+}
 
 // Main Dashboard Component
-const OuraSleepDashboard: React.FC = () => {
+const OuraSleepDashboard: React.FC<OuraSleepDashboardProps> = ({ sleepData }) => {
   const processedData = useMemo(() => {
-    return sampleSleepData
+    return sleepData
       .map((entry) => {
         const totalSleepMinutes = parseDurationToMinutes(
           entry.total_sleep_duration,
@@ -131,7 +132,7 @@ const OuraSleepDashboard: React.FC = () => {
         };
       })
       .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime()); // Ensure data is sorted by date
-  }, []);
+  }, [sleepData]);
 
   const averageMetrics = useMemo(() => {
     if (processedData.length === 0) {

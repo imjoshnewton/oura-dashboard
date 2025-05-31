@@ -44,7 +44,11 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
-import { sleepData } from "@/data/sleepData"
+import { SleepData } from "@/data/sleepData"
+
+interface OuraSleepDashboardO3MediumProps {
+  sleepData: SleepData[];
+}
 
 /* --------------------------------------------------------------------------
    Helpers
@@ -65,6 +69,7 @@ const formatHours = (m: number) => (m / 60).toFixed(1)
 /* --------------------------------------------------------------------------
    Raw Data ‑ last 7 days (would normally come from an API)
    -------------------------------------------------------------------------- */
+const OuraSleepDashboardO3Medium: React.FC<OuraSleepDashboardO3MediumProps> = ({ sleepData }) => {
 const raw = sleepData.slice(-7).map(item => ({
   day: item.day,
   bedtime_start: item.bedtime_start,
@@ -99,7 +104,6 @@ const data = raw.map((d) => ({
 /* ==========================================================================
    Dashboard Component
    ========================================================================== */
-const SleepDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Heading */}
@@ -379,4 +383,4 @@ const SleepDashboard: React.FC = () => {
   )
 }
 
-export default SleepDashboard
+export default OuraSleepDashboardO3Medium

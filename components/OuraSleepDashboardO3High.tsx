@@ -30,7 +30,11 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
-import { sleepData } from "@/data/sleepData"
+import { SleepData } from "@/data/sleepData"
+
+interface OuraSleepDashboardO3HighProps {
+  sleepData: SleepData[];
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                Helper utils                                */
@@ -44,7 +48,7 @@ const COLORS = {
 
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-interface SleepData {
+interface ProcessedSleepData {
   day: string;
   bedtime_start: string;
   bedtime_end: string;
@@ -58,6 +62,7 @@ interface SleepData {
   average_hrv: number;
 }
 
+const OuraSleepDashboardO3High: React.FC<OuraSleepDashboardO3HighProps> = ({ sleepData }) => {
 const raw = sleepData.slice(-7).map(item => ({
   day: item.day,
   bedtime_start: item.bedtime_start,
@@ -116,7 +121,6 @@ const processed = raw.map((d) => {
 /*                               Main Component                               */
 /* -------------------------------------------------------------------------- */
 
-const SleepDashboard: React.FC = () => {
   const [selectedIdx, setSelectedIdx] = useState(processed.length - 1)
 
   const selected = processed[selectedIdx]
@@ -307,4 +311,4 @@ const MetricCard = ({ label, value }: { label: string; value: string | number })
   </Card>
 )
 
-export default SleepDashboard
+export default OuraSleepDashboardO3High

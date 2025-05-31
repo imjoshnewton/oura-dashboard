@@ -22,8 +22,13 @@ import OuraSleepDashboardO3 from "./OuraSleepDashboardO3";
 import OuraSleepDashboardO3Low from "./OuraSleepDashboardO3Low";
 import OuraSleepDashboardO3Medium from "./OuraSleepDashboardO3Medium";
 import OuraSleepDashboardO3High from "./OuraSleepDashboardO3High";
+import { SleepData } from "@/data/sleepData";
 
-const OuraSleepDashboard = () => {
+interface OuraSleepDashboardProps {
+  sleepData: SleepData[];
+}
+
+const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardProps) => {
   const [selectedModel, setSelectedModel] = useState("o3");
 
   const models = [
@@ -88,49 +93,49 @@ const OuraSleepDashboard = () => {
         
         <TabsContent value="gemini" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardGemini />
+            <OuraSleepDashboardGemini sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="gpt" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardGPT />
+            <OuraSleepDashboardGPT sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="claude" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardClaude />
+            <OuraSleepDashboardClaude sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="o3mini" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardO3Mini />
+            <OuraSleepDashboardO3Mini sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="o3" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardO3 />
+            <OuraSleepDashboardO3 sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="o3low" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardO3Low />
+            <OuraSleepDashboardO3Low sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="o3medium" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardO3Medium />
+            <OuraSleepDashboardO3Medium sleepData={sleepData} />
           </div>
         </TabsContent>
         
         <TabsContent value="o3high" className="mt-6">
           <div className="max-w-7xl mx-auto px-4">
-            <OuraSleepDashboardO3High />
+            <OuraSleepDashboardO3High sleepData={sleepData} />
           </div>
         </TabsContent>
       </Tabs>

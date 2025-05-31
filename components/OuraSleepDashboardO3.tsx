@@ -10,9 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { sleepData } from "@/data/sleepData";
+import { SleepData } from "@/data/sleepData";
 import { format, parseISO } from "date-fns";
 import React from "react";
+
+interface OuraSleepDashboardO3Props {
+  sleepData: SleepData[];
+}
 import {
   Area,
   AreaChart,
@@ -44,6 +48,11 @@ const parseDurationToHours = (str: string): number => {
   return (h || 0) + (m || 0) / 60 + (s || 0) / 3600;
 };
 
+/* -------------------------------------------------------------------------- */
+/*                                   component                                */
+/* -------------------------------------------------------------------------- */
+
+const OuraSleepDashboard = ({ sleepData }: OuraSleepDashboardO3Props) => {
 /* -------------------------------------------------------------------------- */
 /*                                   dataset                                  */
 /* -------------------------------------------------------------------------- */
@@ -106,7 +115,6 @@ const stats = {
   avgREM: avg(data.map((d) => d.remHours)),
 };
 
-const SleepDashboard: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center">
@@ -329,5 +337,5 @@ const SleepDashboard: React.FC = () => {
   );
 };
 
-export default SleepDashboard;
+export default OuraSleepDashboard;
 

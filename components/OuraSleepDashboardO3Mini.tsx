@@ -19,27 +19,11 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { sleepData } from "@/data/sleepData";
+import { SleepData } from "@/data/sleepData";
 
-const raw = sleepData.slice(-7).map(item => ({
-  day: item.day,
-  bedtime_start: item.bedtime_start,
-  bedtime_end: item.bedtime_end,
-  total_sleep_duration: item.total_sleep_duration,
-  efficiency: item.efficiency,
-  readiness_score: item.readiness_score,
-  deep_sleep_duration: item.deep_sleep_duration,
-  light_sleep_duration: item.light_sleep_duration,
-  rem_sleep_duration: item.rem_sleep_duration,
-  average_heart_rate: item.average_heart_rate,
-  average_hrv: item.average_hrv || 0,
-  awake_time: item.awake_time || "0 minutes",
-  time_in_bed: item.time_in_bed || item.total_sleep_duration,
-  latency: item.latency || 0,
-  restless_periods: item.restless_periods || 0,
-  average_breath: item.average_breath || 12,
-  lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate
-}));
+interface OuraSleepDashboardO3MiniProps {
+  sleepData: SleepData[];
+}
 
 // Helper function to parse a duration string into seconds.
 function parseDuration(durationStr: string) {
@@ -67,22 +51,42 @@ function formatDuration(seconds: number) {
   return `${hours}h ${minutes}m`;
 }
 
-// Process the raw data to include numeric values.
-const processedData = raw.map((item) => ({
-  day: item.day,
-  totalSleep: parseDuration(item.total_sleep_duration),
-  efficiency: item.efficiency,
-  readiness: item.readiness_score,
-  deepSleep: parseDuration(item.deep_sleep_duration),
-  lightSleep: parseDuration(item.light_sleep_duration),
-  remSleep: parseDuration(item.rem_sleep_duration),
-  averageHR: item.average_heart_rate,
-  averageHRV: item.average_hrv,
-  bedtimeStart: item.bedtime_start,
-  bedtimeEnd: item.bedtime_end,
-}));
+export default function SleepDashboard({ sleepData }: OuraSleepDashboardO3MiniProps) {
+  const raw = sleepData.slice(-7).map(item => ({
+    day: item.day,
+    bedtime_start: item.bedtime_start,
+    bedtime_end: item.bedtime_end,
+    total_sleep_duration: item.total_sleep_duration,
+    efficiency: item.efficiency,
+    readiness_score: item.readiness_score,
+    deep_sleep_duration: item.deep_sleep_duration,
+    light_sleep_duration: item.light_sleep_duration,
+    rem_sleep_duration: item.rem_sleep_duration,
+    average_heart_rate: item.average_heart_rate,
+    average_hrv: item.average_hrv || 0,
+    awake_time: item.awake_time || "0 minutes",
+    time_in_bed: item.time_in_bed || item.total_sleep_duration,
+    latency: item.latency || 0,
+    restless_periods: item.restless_periods || 0,
+    average_breath: item.average_breath || 12,
+    lowest_heart_rate: item.lowest_heart_rate || item.average_heart_rate
+  }));
 
-export default function SleepDashboard() {
+  // Process the raw data to include numeric values.
+  const processedData = raw.map((item) => ({
+    day: item.day,
+    totalSleep: parseDuration(item.total_sleep_duration),
+    efficiency: item.efficiency,
+    readiness: item.readiness_score,
+    deepSleep: parseDuration(item.deep_sleep_duration),
+    lightSleep: parseDuration(item.light_sleep_duration),
+    remSleep: parseDuration(item.rem_sleep_duration),
+    averageHR: item.average_heart_rate,
+    averageHRV: item.average_hrv,
+    bedtimeStart: item.bedtime_start,
+    bedtimeEnd: item.bedtime_end,
+  }));
+
   const totalDays = processedData.length;
 
   const sumTotalSleep = processedData.reduce((sum, rec) => sum + rec.totalSleep, 0);

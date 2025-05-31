@@ -20,10 +20,11 @@ import {
   Legend,
 } from "recharts";
 import { Moon, Heart, Zap, Clock, TrendingUp, Activity } from "lucide-react";
-import { getLastNDaysData } from "@/data/sleepData";
+import { SleepData } from "@/data/sleepData";
 
-// Get the last 7 days of sleep data
-const rawSleepData = getLastNDaysData(7);
+interface OuraSleepDashboardClaudeProps {
+  sleepData: SleepData[];
+}
 
 // Helper function to parse duration strings to minutes
 function parseDuration(durationStr: string): number {
@@ -55,48 +56,6 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-// Process data for charts
-const processedData = rawSleepData.map((day) => ({
-  ...day,
-  date: formatDate(day.day),
-  totalSleepMinutes: parseDuration(day.total_sleep_duration),
-  deepSleepMinutes: parseDuration(day.deep_sleep_duration),
-  lightSleepMinutes: parseDuration(day.light_sleep_duration),
-  remSleepMinutes: parseDuration(day.rem_sleep_duration),
-  awakeMinutes: parseDuration(day.awake_time || "0 minutes"),
-}));
-
-// Calculate averages
-const avgTotalSleep =
-  processedData.reduce((sum, day) => sum + day.totalSleepMinutes, 0) /
-  processedData.length;
-const avgEfficiency =
-  processedData.reduce((sum, day) => sum + day.efficiency, 0) /
-  processedData.length;
-const avgReadiness =
-  processedData.reduce((sum, day) => sum + day.readiness_score, 0) /
-  processedData.length;
-const avgHeartRate =
-  processedData.reduce((sum, day) => sum + day.average_heart_rate, 0) /
-  processedData.length;
-
-// Sleep stages pie chart data (using averages)
-const avgDeepSleep =
-  processedData.reduce((sum, day) => sum + day.deepSleepMinutes, 0) /
-  processedData.length;
-const avgLightSleep =
-  processedData.reduce((sum, day) => sum + day.lightSleepMinutes, 0) /
-  processedData.length;
-const avgRemSleep =
-  processedData.reduce((sum, day) => sum + day.remSleepMinutes, 0) /
-  processedData.length;
-
-const sleepStagesData = [
-  { name: "Deep Sleep", value: avgDeepSleep, color: "#1e3a8a" },
-  { name: "Light Sleep", value: avgLightSleep, color: "#3b82f6" },
-  { name: "REM Sleep", value: avgRemSleep, color: "#60a5fa" },
-];
-
 // Colors for charts
 const COLORS = ["#1e3a8a", "#3b82f6", "#60a5fa"];
 
@@ -115,8 +74,50 @@ function getReadinessBadgeColor(
   return "destructive";
 }
 
-export default function OuraSleepDashboardClaude() {
+export default function OuraSleepDashboardClaude({ sleepData }: OuraSleepDashboardClaudeProps) {
   const [selectedMetric, setSelectedMetric] = useState("sleep");
+
+  // Process data for charts
+  const processedData = sleepData.map((day) => ({
+    ...day,
+    date: formatDate(day.day),
+    totalSleepMinutes: parseDuration(day.total_sleep_duration),
+    deepSleepMinutes: parseDuration(day.deep_sleep_duration),
+    lightSleepMinutes: parseDuration(day.light_sleep_duration),
+    remSleepMinutes: parseDuration(day.rem_sleep_duration),
+    awakeMinutes: parseDuration(day.awake_time || "0 minutes"),
+  }));
+
+  // Calculate averages
+  const avgTotalSleep =
+    processedData.reduce((sum, day) => sum + day.totalSleepMinutes, 0) /
+    processedData.length;
+  const avgEfficiency =
+    processedData.reduce((sum, day) => sum + day.efficiency, 0) /
+    processedData.length;
+  const avgReadiness =
+    processedData.reduce((sum, day) => sum + day.readiness_score, 0) /
+    processedData.length;
+  const avgHeartRate =
+    processedData.reduce((sum, day) => sum + day.average_heart_rate, 0) /
+    processedData.length;
+
+  // Sleep stages pie chart data (using averages)
+  const avgDeepSleep =
+    processedData.reduce((sum, day) => sum + day.deepSleepMinutes, 0) /
+    processedData.length;
+  const avgLightSleep =
+    processedData.reduce((sum, day) => sum + day.lightSleepMinutes, 0) /
+    processedData.length;
+  const avgRemSleep =
+    processedData.reduce((sum, day) => sum + day.remSleepMinutes, 0) /
+    processedData.length;
+
+  const sleepStagesData = [
+    { name: "Deep Sleep", value: avgDeepSleep, color: "#1e3a8a" },
+    { name: "Light Sleep", value: avgLightSleep, color: "#3b82f6" },
+    { name: "REM Sleep", value: avgRemSleep, color: "#60a5fa" },
+  ];
 
   const latestNight = processedData[processedData.length - 1];
 
