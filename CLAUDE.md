@@ -57,3 +57,7 @@ The dashboard displays:
 - Detailed daily log table
 
 Data is currently using sample data embedded in the component. To connect to real Oura API data, you would need to replace the `sampleSleepData` array with API calls.
+
+## Best Practices
+
+- Always fetch data in server components if possible. Don't use client side data fetching unless it's absolutely necessary.
