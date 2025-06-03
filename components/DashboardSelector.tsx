@@ -52,15 +52,14 @@ export default function DashboardSelector({ sleepData, dataSource }: DashboardSe
   const dataInfo = getDataSourceInfo();
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
-        <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium ${dataInfo.className}`}>
-          <span>{dataInfo.label}</span>
-          <span className="text-xs opacity-75">({dataInfo.description})</span>
-        </div>
+    <>
+      <div className={`w-full px-4 py-2 text-center text-sm font-medium ${dataInfo.className} border-b`}>
+        <span>{dataInfo.label}</span>
+        <span className="text-xs opacity-75 ml-2">({dataInfo.description})</span>
       </div>
       
-      <Tabs defaultValue="vercel" className="w-full">
+      <div className="container mx-auto px-4 py-6">
+        <Tabs defaultValue="vercel" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="vercel">Vercel</TabsTrigger>
           <TabsTrigger value="claude">Claude</TabsTrigger>
@@ -103,6 +102,7 @@ export default function DashboardSelector({ sleepData, dataSource }: DashboardSe
           </div>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </>
   );
 }
