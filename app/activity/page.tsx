@@ -1,71 +1,107 @@
-import { getOuraClient, getDateRange } from '@/lib/oura-client'
+import { getOuraClient, getDateRange } from '@/lib/oura-client';
+import OuraActivityDashboardVercel from '@/components/OuraActivityDashboardVercel';
+
+async function getActivityData() {
+  try {
+    const client = getOuraClient();
+    const { startDate, endDate } = getDateRange(30); // Get 30 days of activity data
+    console.log('Fetching activity data from', startDate, 'to', endDate);
+    const data = await client.getActivityData(startDate, endDate);
+    console.log('Received', data.length, 'days of activity data');
+    if (data.length > 0) {
+      console.log('Latest data is for:', data[data.length - 1].day);
+    }
+    return { data, source: 'live' as const };
+  } catch (error) {
+    console.error('Failed to fetch live activity data, using sample data:', error);
+    // Sample activity data for fallback
+    const sampleData = [
+      {
+        day: '2025-06-01',
+        score: 88,
+        active_calories: 718,
+        steps: 10760,
+        equivalent_walking_distance: 11643,
+        total_calories: 3166,
+        high_activity_time: 0,
+        medium_activity_time: 220,
+        low_activity_time: 279,
+        sedentary_time: 360,
+        resting_time: 610,
+        inactivity_alerts: 0,
+        contributors: {
+          meet_daily_targets: 60,
+          move_every_hour: 100,
+          recovery_time: 100,
+          stay_active: 97,
+          training_frequency: 96,
+          training_volume: 92
+        },
+        target_calories: 650,
+        target_meters: 11000,
+        meters_to_target: -1000,
+        timestamp: '2025-06-01T04:00:00-04:00'
+      },
+      {
+        day: '2025-06-02',
+        score: 78,
+        active_calories: 557,
+        steps: 8191,
+        equivalent_walking_distance: 8708,
+        total_calories: 3029,
+        high_activity_time: 0,
+        medium_activity_time: 141,
+        low_activity_time: 241,
+        sedentary_time: 472,
+        resting_time: 554,
+        inactivity_alerts: 1,
+        contributors: {
+          meet_daily_targets: 43,
+          move_every_hour: 95,
+          recovery_time: 100,
+          stay_active: 86,
+          training_frequency: 71,
+          training_volume: 86
+        },
+        target_calories: 650,
+        target_meters: 11000,
+        meters_to_target: 1600,
+        timestamp: '2025-06-02T04:00:00-04:00'
+      }
+    ];
+    return { data: sampleData, source: 'sample' as const };
+  }
+}
 
 export default async function ActivityPage() {
-  const client = getOuraClient()
-  const { startDate, endDate } = getDateRange(30)
-  const activityData = await client.getActivityData(startDate, endDate)
-  
+  const { data: activityData, source: dataSource } = await getActivityData();
+
+  const getDataSourceInfo = () => {
+    if (dataSource === 'live') {
+      return {
+        label: '🟢 Live Data',
+        description: 'Current data from Oura API',
+        className: 'bg-green-100 text-green-800 border-green-200'
+      };
+    } else {
+      return {
+        label: '🟡 Sample Data',
+        description: 'Sample activity data from June 1-2, 2025',
+        className: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      };
+    }
+  };
+
+  const dataInfo = getDataSourceInfo();
+
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 space-y-6 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          Activity Dashboard
-        </h1>
-        <p className="text-gray-600">
-          Live activity data from Oura API
-        </p>
+    <>
+      <div className={`w-full px-4 py-2 text-center text-sm font-medium ${dataInfo.className} border-b`}>
+        <span>{dataInfo.label}</span>
+        <span className="text-xs opacity-75 ml-2">({dataInfo.description})</span>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Average Activity Score</h3>
-          <p className="text-3xl font-bold text-blue-600">
-            {Math.round(activityData.reduce((sum, day) => sum + day.score, 0) / activityData.length)}
-          </p>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Steps</h3>
-          <p className="text-3xl font-bold text-green-600">
-            {activityData.reduce((sum, day) => sum + day.steps, 0).toLocaleString()}
-          </p>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Days</h3>
-          <p className="text-3xl font-bold text-purple-600">
-            {activityData.length}
-          </p>
-        </div>
-      </div>
-      
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-2">Date</th>
-                <th className="text-left p-2">Score</th>
-                <th className="text-left p-2">Steps</th>
-                <th className="text-left p-2">Active Calories</th>
-                <th className="text-left p-2">Distance (m)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activityData.slice(-10).reverse().map((day) => (
-                <tr key={day.day} className="border-b hover:bg-gray-50">
-                  <td className="p-2">{new Date(day.day).toLocaleDateString()}</td>
-                  <td className="p-2 font-semibold">{day.score}</td>
-                  <td className="p-2">{day.steps.toLocaleString()}</td>
-                  <td className="p-2">{day.active_calories}</td>
-                  <td className="p-2">{day.equivalent_walking_distance}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+      <OuraActivityDashboardVercel activityData={activityData} />
+    </>
   );
 }

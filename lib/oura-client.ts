@@ -51,6 +51,7 @@ export interface OuraActivityResponse {
     target_calories: number;
     target_meters: number;
     total_calories: number;
+    timestamp?: string;
     contributors?: {
       meet_daily_targets: number;
       move_every_hour: number;
@@ -223,6 +224,7 @@ export class OuraClient {
       steps_formatted: `${activity.steps} steps`,
       equivalent_walking_distance_formatted: `${activity.equivalent_walking_distance} m`,
       contributors: activity.contributors,
+      timestamp: activity.timestamp,
     }));
   }
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Moon, Activity, Sparkles } from "lucide-react";
+import { RefreshButton } from "./RefreshButton";
 
 export default function Header() {
   const pathname = usePathname();
@@ -29,6 +30,7 @@ export default function Header() {
           <div className="hidden md:block text-sm text-gray-500">
             Track your wellness journey
           </div>
+          <RefreshButton />
           <nav className="flex items-center space-x-1">
             <Link
               href="/"
